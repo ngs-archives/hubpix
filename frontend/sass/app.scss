@@ -1,0 +1,41 @@
+body {
+  padding: 2em 0;
+}
+
+.login {
+  padding: 3em 0;
+  text-align: center;
+  h1 {
+    margin: 0 0 0.5em 0;
+    font-size: 5em;
+  }
+}
+
+.list-group-item img {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  margin-right: 1em;
+}
+
+#dropzone {
+  margin-bottom: 2em;
+  form.dropzone {
+    border: 0;
+    background: transparent;
+    .dz-default {
+      font-size: 2em;
+      font-weight: bold;
+      i {
+        font-size: 4em;
+      }
+    }
+  }
+  .commit {
+    display: none;
+    padding-bottom: 2em;
+  }
+  .dz-started .commit { display: block; }
+}
+
+

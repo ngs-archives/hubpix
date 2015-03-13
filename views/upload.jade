@@ -1,0 +1,15 @@
+extends ./layout
+
+block content
+  ol.breadcrumb
+  .well#dropzone
+    form.dropzone#file-upload(action="./upload")
+      .fallback
+        input(type="file" name="file" multiple)
+      .commit
+        .form-group
+          label(for= 'commit-message-input') Commit message
+          input.form-control#commit-message-input(type= 'text')
+        button.btn.btn-primary(type="submit" data-commiting-text="Commiting...") Commit
+  .current-items
+

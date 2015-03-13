@@ -1,0 +1,9 @@
+extends ./layout
+
+block content
+  .login
+    h1 Hubpix
+    a.btn.btn-primary.btn-lg(href="/login?returnUrl=" + encodeURIComponent(path))
+      i.fa.fa-github
+      | &nbsp;Login
+
