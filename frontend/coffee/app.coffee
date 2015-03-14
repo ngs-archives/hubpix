@@ -118,12 +118,12 @@ uploader = (currentPath) ->
               params = { sha: res.sha }
               $.ajax({ url: updateRefAPI, method: 'PATCH', data: JSON.stringify(params) }).done (res) ->
                 dz.removeAllFiles()
-                do refreshThumbnails
                 input.prop 'disabled', no
                 btn.button('reset').prop 'disabled', no
+                setTimeout refreshThumbnails, 1000
       no
   do refreshThumbnails = ->
-    getAPI "/repos/#{user}/#{repo}/contents/#{browsingPath}?ref=#{ref}", (res) ->
+    getAPI "/repos/#{user}/#{repo}/contents/#{browsingPath}?ref=#{ref}&_ts=#{new Date().getTime()}", (res) ->
       $('.current-items').empty()
       res = res.filter ({ path }) -> /\.(png|jpg|gif)$/.test path
       row = null
@@ -166,7 +166,6 @@ updateBreadCrumbs = (paths) ->
     ol.append if i == last
       """<li class="active">#{text}</li>"""
     else
-      console.info paths[0..i]
       """<li><a href="#{paths[0..i].join('/') || '/'}">#{text}</a></li>"""
 
 handleRoute = ->
