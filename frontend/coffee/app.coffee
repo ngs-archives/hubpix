@@ -136,7 +136,7 @@ uploader = (currentPath) ->
             <img src="#{item.download_url}" style="max-width:100%" alt="#{item.name}">
             <div class="caption">
               <p><b>#{item.name}</b></p>
-              <p><input class="form-control" type="text" value="![#{item.name}](#{item.name})" onclick="this.select()" readonly></p>
+              <p><input class="form-control" type="text" value="![#{item.name}](#{encodeURIComponent item.name})" onclick="this.select()" readonly></p>
             </div>
           </div>
         </div>
