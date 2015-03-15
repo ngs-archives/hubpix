@@ -1,5 +1,7 @@
 API_BASE = 'https://api.github.com'
 
+is_iOS = /^Mozilla\/\d\.\d\s\(iP(hone|ad|od\stouch);\sCPU/.test navigator.userAgent
+
 getAccessToken = -> $('meta[name=x-github-access-token]').attr 'content'
 
 getAPI = (path, callback) ->
@@ -45,6 +47,7 @@ directoryIndex = (currentPath) ->
           createListItem path, "#{currentPath}/#{encodeURIComponent path}"
 
 uploader = (currentPath) ->
+  imgCounts = {}
   pathComponents = currentPath.replace(/^\/(orgs\/)?/, '').split '/'
   [user, repo, ref, path] = pathComponents
   ref = decodeURIComponent ref
@@ -57,12 +60,23 @@ uploader = (currentPath) ->
   createCommitAPI = apiBase + 'commits'
   updateRefAPI = API_BASE + refAPIPath
   dz = null
+  defaultMessage = if is_iOS
+    'Select file from album'
+  else
+    'Drop files here to upload'
   $('#file-upload').dropzone
-    dictDefaultMessage: '<i class="glyphicon glyphicon-cloud-upload"></i><br>Drop files here to upload'
+    dictDefaultMessage: '<i class="glyphicon glyphicon-cloud-upload"></i><br>' + defaultMessage
     addRemoveLinks: yes
     acceptedFiles: 'image/png,image/jpeg,image/gif'
     addedfile: (file) ->
-      file.name ||= "Pasted image #{new Date().toLocaleString().replace(/\//g, '-').replace(/:/g, '.')}.png"
+      ts = new Date().toLocaleString().replace(/\//g, '-').replace(/:/g, '.')
+      if imgCounts[ts]
+        ts += ' ' + imgCounts[ts]
+      imgCounts[ts] ||= 0
+      imgCounts[ts]++
+      file.name ||= "Pasted image #{ts}.png"
+      if is_iOS
+        file.__defineGetter__ 'name', -> "Mobile upload #{ts}.jpg"
       Dropzone.prototype.defaultOptions.addedfile.apply @, [file]
     init: ->
       dz = @

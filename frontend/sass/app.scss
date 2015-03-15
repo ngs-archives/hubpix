@@ -38,4 +38,20 @@ body {
   .dz-started .commit { display: block; }
 }
 
+body .dropzone .dz-preview.dz-image-preview  {
+  background: transparent;
+  border: 2px solid #666;
+  margin: 10px 8px 0 0;
+}
 
+#commit-btn {
+  display: block;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  #commit-btn {
+    display: inline;
+    width: auto;
+  }
+}
