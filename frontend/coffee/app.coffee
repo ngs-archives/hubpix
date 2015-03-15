@@ -41,19 +41,21 @@ directoryIndex = (currentPath) ->
   getAPI currentPath.replace(/^\/(?:orgs\/)?/, '/repos/').replace(/([^\/]+)$/, "git/refs/heads/$1"), ({ object: {url} }) ->
     path = $("<a href='#{url}'>")[0].pathname.replace('/git/commits/', '/git/trees/') + '?recursive=1'
     getAPI path, ({tree}) ->
+      createListItem '/', currentPath + '/upload'
       $.each tree, (i, item) ->
         {type, path} = item
         if type is 'tree'
-          createListItem path, "#{currentPath}/#{encodeURIComponent path}"
+          createListItem '/' + path, "#{currentPath}/#{encodeURIComponent path}/upload"
 
 uploader = (currentPath) ->
   imgCounts = {}
   pathComponents = currentPath.replace(/^\/(orgs\/)?/, '').split '/'
+  pathComponents.pop()
   [user, repo, ref, path] = pathComponents
   ref = decodeURIComponent ref
   refAPIPath = "/repos/#{user}/#{repo}/git/refs/heads/#{ref}"
   endpoint = $('body').data('endpoints')?[currentPath] || ''
-  browsingPath = decodeURIComponent path
+  browsingPath = decodeURIComponent path || ''
   apiBase = "#{API_BASE}/repos/#{user}/#{repo}/git/"
   action = apiBase + 'blobs'
   createTreeAPI = apiBase + 'trees'
@@ -120,7 +122,8 @@ uploader = (currentPath) ->
       newTree = $('.dz-preview.dz-complete').map ->
         ele = $ @
         sha = ele.data 'sha'
-        path = browsingPath + '/' + (ele.find('[data-dz-name]').text() || new Date().getTime() + Math.ceil(Math.random() * 10000000) + '.png')
+        path = (ele.find('[data-dz-name]').text() || new Date().getTime() + Math.ceil(Math.random() * 10000000) + '.png')
+        path = browsingPath + '/' + path if browsingPath
         { sha, path, mode: '100644', type: 'blob' }
       .get()
       getAPI refAPIPath, ({object}) ->
@@ -154,7 +157,9 @@ uploader = (currentPath) ->
         row.append """
         <div class="col-sm-6 col-md-3">
           <div class="thumbnail">
-            <img src="#{item.download_url}" style="max-width:100%" alt="#{item.name}">
+            <a href="#{item.html_url}" target="_blank">
+              <img src="#{item.download_url}" style="max-width:100%" alt="#{item.name}">
+            </a>
             <div class="caption">
               <p><b>#{item.name}</b></p>
               <p><input class="form-control" type="text" value="![#{item.name}](#{endpoint}#{encodeURIComponent item.name})" onclick="this.select()" readonly></p>
@@ -168,14 +173,20 @@ routes =
   '/:user': [repositoryIndex, 'Select repository']
   '/:user/:repo': [branchIndex, 'Select branch']
   '/:user/:repo/:branch': [directoryIndex, 'Select directory to upload']
-  '/:user/:repo/:branch/:path': [uploader, 'Upload']
+  '/:user/:repo/:branch/upload': [uploader, 'Upload']
+  '/:user/:repo/:branch/:path/upload': [uploader, 'Upload']
   '/orgs/:org': [repositoryIndex, 'Select repository']
   '/orgs/:org/:repo': [branchIndex, 'Select branch']
   '/orgs/:org/:repo/:branch': [directoryIndex, 'Select directory to upload']
-  '/orgs/:org/:repo/:branch/:path': [uploader, 'Upload']
+  '/orgs/:org/:repo/:branch/upload': [uploader, 'Upload']
+  '/orgs/:org/:repo/:branch/:path/upload': [uploader, 'Upload']
 
 updateBreadCrumbs = (paths) ->
   ol = $ 'ol.breadcrumb'
+  isUpload = no
+  if paths[paths.length - 1] is 'upload'
+    paths.pop()
+    isUpload = yes
   last = paths.length - 1
   for i in [0..last]
     continue if paths[i] is 'orgs'
@@ -184,7 +195,13 @@ updateBreadCrumbs = (paths) ->
     else
       decodeURIComponent paths[i]
     ol.append if i == last
-      """<li class="active">#{text}</li>"""
+      if isUpload && last == 4
+        """
+        <li><a href="#{paths[0..i].join('/') || '/'}">#{text}</a></li>
+        <li class="active">(root)</li>
+        """
+      else
+        """<li class="active">#{text}</li>"""
     else
       """<li><a href="#{paths[0..i].join('/') || '/'}">#{text}</a></li>"""
 

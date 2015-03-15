@@ -105,8 +105,13 @@ app.get '/login', (req, res) ->
   catch e
     app.renderError res, e.message, 400
 
-app.get '/orgs/:org/:repo/:branch/:path', (req, res) ->
-  res.render 'upload', req
+for route in [
+  '/orgs/:org/:repo/:branch/:path/upload'
+  '/orgs/:org/:repo/:branch/upload'
+  '/:user/:repo/:branch/:path/upload'
+  '/:user/:repo/:branch/upload'
+]
+  app.get route, (req, res) -> res.render 'upload', req
 
 for route in [
   '/orgs/:org/:repo/:branch'
@@ -119,7 +124,8 @@ for route in [
 ]
   app.get route, (req, res) -> res.render 'index', req
 
-app.get '/:user/:repo/:branch/:path', (req, res) ->
+
+app.get '/:user/:repo/:branch/:path/upload', (req, res) ->
   res.render 'upload', req
 
 app.listen process.env.PORT || 3000
