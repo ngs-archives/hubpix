@@ -61,6 +61,9 @@ uploader = (currentPath) ->
     dictDefaultMessage: '<i class="glyphicon glyphicon-cloud-upload"></i><br>Drop files here to upload'
     addRemoveLinks: yes
     acceptedFiles: 'image/png,image/jpeg,image/gif'
+    addedfile: (file) ->
+      file.name ||= "Pasted image #{new Date().toLocaleString().replace(/\//g, '-').replace(/:/g, '.')}.png"
+      Dropzone.prototype.defaultOptions.addedfile.apply @, [file]
     init: ->
       dz = @
       dz.uploadFiles = (droppedFiles) ->
@@ -103,7 +106,7 @@ uploader = (currentPath) ->
       newTree = $('.dz-preview.dz-complete').map ->
         ele = $ @
         sha = ele.data 'sha'
-        path = browsingPath + '/' + ele.find('[data-dz-name]').text()
+        path = browsingPath + '/' + (ele.find('[data-dz-name]').text() || new Date().getTime() + Math.ceil(Math.random() * 10000000) + '.png')
         { sha, path, mode: '100644', type: 'blob' }
       .get()
       getAPI refAPIPath, ({object}) ->
@@ -123,6 +126,9 @@ uploader = (currentPath) ->
                 btn.button('reset').prop 'disabled', no
                 setTimeout refreshThumbnails, 1000
       no
+  $(document).on 'paste', (e) ->
+    dz?.paste e.originalEvent
+
   do refreshThumbnails = ->
     getAPI "/repos/#{user}/#{repo}/contents/#{browsingPath}?ref=#{ref}&_ts=#{new Date().getTime()}", (res) ->
       $('.current-items').empty()

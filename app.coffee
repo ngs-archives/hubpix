@@ -46,6 +46,9 @@ app.use express.static Path.join __dirname, 'public'
 app.locals.endpoints = (try JSON.parse process.env.IMAGE_ENDPOINTS) || {}
 
 app.use (req, res, next) ->
+  if req.headers['x-forwarded-proto'] is 'http'
+    res.redirect "https://#{req.host}#{req.path}"
+    return
   if /^\/(login|oauth\/callbacks)$/.test req.path
     do next
     return
