@@ -44,6 +44,7 @@ app.use connectCoffeeScript {
 }
 app.use express.static Path.join __dirname, 'public'
 app.locals.endpoints = (try JSON.parse process.env.IMAGE_ENDPOINTS) || {}
+app.locals.bootstrapURL = process.env.BOOTSTRAP_URL || "https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.2/css/bootstrap.min.css"
 
 app.use (req, res, next) ->
   if req.headers['x-forwarded-proto'] is 'http'

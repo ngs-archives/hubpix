@@ -8,7 +8,14 @@
      "GITHUB_CLIENT_ID": "",
      "GITHUB_CLIENT_SECRET": "",
      "NODE_ENV": "production",
-     "SECRET_TOKEN": "KXCzp1YgSXSzCoIOvduVI1Hje4WretyqXTK4QKE9a8I="
+     "SECRET_TOKEN": {
+       "description": "Generate your original secret token for security. Try run `openssl rand -base64 32`.",
+       "value": "KXCzp1YgSXSzCoIOvduVI1Hje4WretyqXTK4QKE9a8I="
+     },
+     "BOOTSTRAP_URL": {
+       "description": "Customize Bootstrap theme",
+       "value": "https://maxcdn.bootstrapcdn.com/bootswatch/3.3.2/paper/bootstrap.min.css"
+     }
    },
    "addons": ["redistogo"]
 }
