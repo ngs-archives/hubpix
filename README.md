@@ -7,6 +7,8 @@ Drag, drop and commit pictures to GitHub
 
 [![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
 
+![](https://raw.githubusercontent.com/ngs/sources.ngs.io/master/source/images/2015-03-15-hubpix/hubpix.gif)
+
 Author
 ------
 
