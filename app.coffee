@@ -5,7 +5,7 @@ express = require 'express'
 extend = require 'extend'
 github = require 'octonode'
 morgan = require 'morgan'
-redis = require 'redis'
+_redis = require 'redis'
 session = require 'express-session'
 sassMiddleware = require 'node-sass-middleware'
 connectCoffeeScript = require 'connect-coffee-script'
@@ -16,10 +16,10 @@ parseLinkHeader = require 'parse-link-header'
 
 if uriString = process.env.REDISTOGO_URL || process.env.BOXEN_REDIS_URL
   uri = require('url').parse uriString
-  redis = require('redis').createClient uri.port, uri.hostname
+  redis = _redis.createClient uri.port, uri.hostname
   redis.auth uri.auth?.split(':')?[1]
 else
-  redis = require('redis').createClient()
+  redis = _redis.createClient()
 
 app = express()
 app.set 'view engine', 'jade'
@@ -43,6 +43,7 @@ app.use connectCoffeeScript {
   dest: "#{__dirname}/public"
 }
 app.use express.static Path.join __dirname, 'public'
+app.locals.endpoints = (try JSON.parse process.env.IMAGE_ENDPOINTS) || {}
 
 app.use (req, res, next) ->
   if /^\/(login|oauth\/callbacks)$/.test req.path

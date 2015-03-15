@@ -49,6 +49,7 @@ uploader = (currentPath) ->
   [user, repo, ref, path] = pathComponents
   ref = decodeURIComponent ref
   refAPIPath = "/repos/#{user}/#{repo}/git/refs/heads/#{ref}"
+  endpoint = $('body').data('endpoints')?[currentPath] || ''
   browsingPath = decodeURIComponent path
   apiBase = "#{API_BASE}/repos/#{user}/#{repo}/git/"
   action = apiBase + 'blobs'
@@ -136,12 +137,11 @@ uploader = (currentPath) ->
             <img src="#{item.download_url}" style="max-width:100%" alt="#{item.name}">
             <div class="caption">
               <p><b>#{item.name}</b></p>
-              <p><input class="form-control" type="text" value="![#{item.name}](#{encodeURIComponent item.name})" onclick="this.select()" readonly></p>
+              <p><input class="form-control" type="text" value="![#{item.name}](#{endpoint}#{encodeURIComponent item.name})" onclick="this.select()" readonly></p>
             </div>
           </div>
         </div>
         """
-
 
 routes =
   '/': [organizationIndex, 'Select organization']
